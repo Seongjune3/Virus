@@ -52,26 +52,35 @@ public class VirusLaser : MonoBehaviour
         LaserPathPosition[0] = currentRayPos;
         int vertexCount = 1;
 
+        float remainingLength = maxLaserLength;
+
         for (int i = 0; i < maxBounce; i++)
         {
-            RaycastHit2D hit = Physics2D.Raycast(currentRayPos, currentRayDir, maxLaserLength, objectLayer);
+            RaycastHit2D hit = Physics2D.Raycast(currentRayPos, currentRayDir, remainingLength, objectLayer);
 
             if (hit.collider != null)
             {
                 LaserPathPosition[vertexCount] = hit.point;
                 vertexCount++;
 
-                currentRayDir = Vector2.Reflect(currentRayDir, hit.normal);
+                remainingLength -= hit.distance;
+
+                
+                currentRayDir = Vector2.Reflect(currentRayDir, hit.normal); // 다음 레이저의 방향 반사 계산
+
+                currentRayPos = hit.point + (hit.normal * 0.01f);
+
+                if (remainingLength <= 0f) break;
             }
             else
             {
-                LaserPathPosition[vertexCount] = currentRayPos + (currentRayDir * maxLaserLength); // 레이저 아무것도 안 맞으면 최대거리로 발사 (현재 각도 * 최대 길이 = 끝까지 가야할 점 위치)
+                LaserPathPosition[vertexCount] = currentRayPos + (currentRayDir * remainingLength);
                 vertexCount++;
                 break;
             }
         }
 
-        lineRenderer.positionCount = vertexCount;
+        lineRenderer.positionCount = vertexCount; // LineRenderer에 최종 좌표값들 적용하기
         for (int i = 0; i < vertexCount; i++)
         {
             lineRenderer.SetPosition(i, LaserPathPosition[i]);
