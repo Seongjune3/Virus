@@ -1,31 +1,31 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class VirusLaser : MonoBehaviour
 {
-    [Header("조준 설정")]
-    public int maxBounce = 5;  // 최대 튕길 횟수
-    public float maxLaserLength = 30f; // 최대 레이저 길이
+    public int maxBounce = 5;
+    public float maxLaserLength = 30f;
     public LayerMask objectLayer;
 
-    private LineRenderer lineRenderer;
-    private Vector3[] LaserPathPosition;
-    private Vector2 currentDirection = Vector2.up;
-    private float currentAngle = 0f;
+    public LineRenderer lineRenderer1;
+    public LineRenderer lineRenderer2;
 
-    private void Awake()
-    {
-        LaserPathPosition = new Vector3[maxBounce + 1]; // 미리 크기 정하기
-        lineRenderer = GetComponent<LineRenderer>();
-    }
+    List<Vector3> path1 = new List<Vector3>();
+    List<Vector3> path2 = new List<Vector3>();
 
-    private void Update()
+    Vector2 currentDirection = Vector2.up;
+    float currentAngle = 0f;
+
+    void Update()
     {
         GetInput();
-        CalculateAndDrawBeam();
+        DrawBeam();
     }
 
-    private void GetInput()
+    void GetInput()
     {
+        if (GameManager.Instance.IsCleared) return;
+
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
             currentAngle += 45f;
@@ -38,52 +38,77 @@ public class VirusLaser : MonoBehaviour
         }
     }
 
-    private void UpdateDirection()
+    void UpdateDirection()
     {
         transform.rotation = Quaternion.Euler(0, 0, currentAngle);
         currentDirection = transform.up;
     }
 
-    private void CalculateAndDrawBeam()
+    void DrawBeam()
     {
-        Vector2 currentRayPos = transform.position; // 레이저 발사 위치 설정
-        Vector2 currentRayDir = currentDirection; // 레이저 각도 설정
+        path1.Clear();
+        path2.Clear();
 
-        LaserPathPosition[0] = currentRayPos;
-        int vertexCount = 1;
+        Vector2 rayPos = transform.position;
+        Vector2 rayDir = currentDirection;
 
-        float remainingLength = maxLaserLength;
+        path1.Add(rayPos);
+
+        bool wentPortal = false;
+        float length = maxLaserLength;
 
         for (int i = 0; i < maxBounce; i++)
         {
-            RaycastHit2D hit = Physics2D.Raycast(currentRayPos, currentRayDir, remainingLength, objectLayer);
+            RaycastHit2D hit = Physics2D.Raycast(rayPos, rayDir, length, objectLayer);
 
-            if (hit.collider != null)
+            if (hit.collider == null)
             {
-                LaserPathPosition[vertexCount] = hit.point;
-                vertexCount++;
+                Vector2 endPoint = rayPos + rayDir * length;
+                if (!wentPortal) path1.Add(endPoint);
+                else path2.Add(endPoint);
+                break;
+            }
 
-                remainingLength -= hit.distance;
+            if (!wentPortal) path1.Add(hit.point);
+            else path2.Add(hit.point);
 
-                
-                currentRayDir = Vector2.Reflect(currentRayDir, hit.normal); // 다음 레이저의 방향 반사 계산
+            length -= hit.distance;
 
-                currentRayPos = hit.point + (hit.normal * 0.01f);
+            if (length <= 0f) break;
 
-                if (remainingLength <= 0f) break;
+            if (hit.collider.CompareTag("Mirror"))
+            {
+                rayDir = Vector2.Reflect(rayDir, hit.normal);
+                rayPos = hit.point + hit.normal * 0.01f;
+            }
+            else if (hit.collider.CompareTag("Portal") && !wentPortal)
+            {
+                Portal portal = hit.collider.GetComponent<Portal>();
+                rayPos = (Vector2)portal.targetPortal.transform.position;
+                wentPortal = true;
+                path2.Add(rayPos);
+            }
+            else if (hit.collider.CompareTag("CDrive"))
+            {
+                GameManager.Instance.StageClear();
+                break;
             }
             else
             {
-                LaserPathPosition[vertexCount] = currentRayPos + (currentRayDir * remainingLength);
-                vertexCount++;
                 break;
             }
         }
 
-        lineRenderer.positionCount = vertexCount; // LineRenderer에 최종 좌표값들 적용하기
-        for (int i = 0; i < vertexCount; i++)
+        DrawLine(lineRenderer1, path1);
+        DrawLine(lineRenderer2, path2);
+    }
+
+    void DrawLine(LineRenderer lr, List<Vector3> points)
+    {
+        lr.positionCount = points.Count;
+        for (int i = 0; i < points.Count; i++)
         {
-            lineRenderer.SetPosition(i, LaserPathPosition[i]);
+            lr.SetPosition(i, points[i]);
         }
     }
 }
