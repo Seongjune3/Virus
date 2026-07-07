@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
+    private static GameManager instance = null;
 
     public int currentWorld = 1;
     public int currentStage = 1;
@@ -22,11 +22,10 @@ public class GameManager : MonoBehaviour
     public GameObject nextStageButton;
     public GameObject endingButton;
     public GameObject settingsUI;
+    public GameObject titleUI;
 
     public TextMeshProUGUI clearTitleText;
     public TextMeshProUGUI clearStageText;
-
-
 
     public List<Image> memoryImages;
     private int collectedMemories = 0;
@@ -35,15 +34,42 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null) Instance = this;
-        
-        else Destroy(gameObject);
+        if (null == instance)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    void Start()
+    public static GameManager Instance
     {
-        if (SceneManager.GetActiveScene().name != titleSceneName)
+        get
         {
+            if (null == instance)
+            {
+                return null;
+            }
+            return instance;
+        }
+    }
+
+    void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name != titleSceneName)
+        {
+            titleUI.SetActive(false);
+
             currentWorld = PlayerPrefs.GetInt("SavedWorld", 1);
             currentStage = PlayerPrefs.GetInt("SavedStage", 1);
 
@@ -52,14 +78,20 @@ public class GameManager : MonoBehaviour
                 SpawnStage(currentStage - 1);
             }
         }
+
+        else
+        {
+            titleUI.SetActive(true);
+            clearUI.SetActive(false);
+            settingsUI.SetActive(false);
+        }
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            bool isActive = settingsUI.activeSelf;
-            settingsUI.SetActive(!isActive);
+            ToggleSettings();
         }
     }
 
@@ -101,23 +133,20 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                memoryImages[i].color = new Color(0.25f, 0.25f, 0.25f, 1f);
+                memoryImages[i].color = new Color(55f, 55f, 55f, 255f);
             }
         }
-
 
         clearStageText.text = currentWorld + "-" + currentStage;
         if (currentStage >= stagePrefabs.Count)
         {
             clearTitleText.text = "올 클리어!!";
-
             nextStageButton.SetActive(false);
             endingButton.SetActive(true);
         }
         else
         {
             clearTitleText.text = "클리어!!";
-
             nextStageButton.SetActive(true);
             endingButton.SetActive(false);
         }
@@ -167,14 +196,27 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
-    public void OpenSettings()
+    public void ToggleSettings()
     {
-        settingsUI.SetActive(true);
-    }
+        bool isActive = !settingsUI.activeSelf;
+        settingsUI.SetActive(isActive);
 
-    public void CloseSettings()
-    {
-        settingsUI.SetActive(false);
+        if (isActive)
+        {
+            if (titleUI != null) titleUI.SetActive(false);
+            clearUI.SetActive(false);
+        }
+        else
+        {
+            if (SceneManager.GetActiveScene().name == titleSceneName)
+            {
+                if (titleUI != null) titleUI.SetActive(true);
+            }
+            else if (IsCleared)
+            {
+                clearUI.SetActive(true);
+            }
+        }
     }
 
     public void QuitGame()
