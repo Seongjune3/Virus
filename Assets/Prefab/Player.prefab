@@ -4894,7 +4894,7 @@ MonoBehaviour:
   maxLaserLength: 100
   objectLayer:
     serializedVersion: 2
-    m_Bits: 960
+    m_Bits: 1984
   lineRenderer1: {fileID: 34046285133812293}
   lineRenderer2: {fileID: 0}
 --- !u!120 &34046285133812293

@@ -7,6 +7,7 @@ TagManager:
   - Portal
   - Mirror
   - CDrive
+  - Memory
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - Portal
   - Wall
   - CDrive
-  - 
+  - Memory
   - 
   - 
   - 

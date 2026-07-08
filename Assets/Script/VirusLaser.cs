@@ -93,6 +93,17 @@ public class VirusLaser : MonoBehaviour
                 GameManager.Instance.StageClear();
                 break;
             }
+            else if (hit.collider.CompareTag("Memory"))
+            {
+                Star memory = hit.collider.GetComponent<Star>();
+
+                GameManager.Instance.AddMemory();
+
+                memory.Boom();
+
+                break;
+                
+            }
             else
             {
                 break;
