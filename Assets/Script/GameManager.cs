@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -31,6 +32,9 @@ public class GameManager : MonoBehaviour
     private int collectedMemories = 0;
 
     public bool IsCleared = false;
+
+    public CanvasGroup fadeImage;
+    public float fadeDuration = 1.0f;
 
     void Awake()
     {
@@ -68,7 +72,7 @@ public class GameManager : MonoBehaviour
     {
         if (scene.name != titleSceneName)
         {
-            titleUI.SetActive(false);
+            if (titleUI != null) titleUI.SetActive(false);
 
             currentWorld = PlayerPrefs.GetInt("SavedWorld", 1);
             currentStage = PlayerPrefs.GetInt("SavedStage", 1);
@@ -78,10 +82,9 @@ public class GameManager : MonoBehaviour
                 SpawnStage(currentStage - 1);
             }
         }
-
         else
         {
-            titleUI.SetActive(true);
+            if (titleUI != null) titleUI.SetActive(true);
             clearUI.SetActive(false);
             settingsUI.SetActive(false);
         }
@@ -133,7 +136,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                memoryImages[i].color = new Color(55f, 55f, 55f, 255f);
+                memoryImages[i].color = new Color32(55, 55, 55, 255);
             }
         }
 
@@ -192,8 +195,46 @@ public class GameManager : MonoBehaviour
 
     public void LoadScene(string sceneName)
     {
+        if (SceneManager.GetActiveScene().name == titleSceneName && sceneName == titleSceneName)
+        {
+            ToggleSettings();
+            return;
+        }
+
         SaveGame();
+        
+        StartCoroutine(FadeAndLoad(sceneName));
+    }
+
+    IEnumerator FadeAndLoad(string sceneName)
+    {
+        fadeImage.gameObject.SetActive(true);
+        fadeImage.blocksRaycasts = true;
+
+        float timer = 0f;
+        while (timer < fadeDuration)
+        {
+            timer += Time.deltaTime;
+            fadeImage.alpha = Mathf.Lerp(0f, 1f, timer / fadeDuration);
+            yield return null;
+        }
+        fadeImage.alpha = 1f;
+
         SceneManager.LoadScene(sceneName);
+
+        yield return null; 
+
+        timer = 0f;
+        while (timer < fadeDuration)
+        {
+            timer += Time.deltaTime;
+            fadeImage.alpha = Mathf.Lerp(1f, 0f, timer / fadeDuration);
+            yield return null;
+        }
+        
+        fadeImage.alpha = 0f;
+        fadeImage.blocksRaycasts = false;
+        fadeImage.gameObject.SetActive(false);
     }
 
     public void ToggleSettings()

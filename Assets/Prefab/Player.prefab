@@ -4891,7 +4891,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirusLaser
   maxBounce: 5
-  maxLaserLength: 50
+  maxLaserLength: 100
   objectLayer:
     serializedVersion: 2
     m_Bits: 960

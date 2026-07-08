@@ -133,7 +133,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RotateMirror
   angles:
   - 0
-  - 45
   - 90
 --- !u!1 &6822155210973474389
 GameObject:

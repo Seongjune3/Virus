@@ -7,9 +7,15 @@ public class RotateMirror : MonoBehaviour, IPointerDownHandler
     public List<float> angles;
     int currentIndex = 0;
 
+    float currentX;
+    float currentY;
+
     void Start()
     {
-        transform.rotation = Quaternion.Euler(0, 0, angles[currentIndex]);
+        currentX = transform.eulerAngles.x;
+        currentY = transform.eulerAngles.y;
+
+        transform.rotation = Quaternion.Euler(currentX , currentY, angles[currentIndex]);
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -17,6 +23,6 @@ public class RotateMirror : MonoBehaviour, IPointerDownHandler
         if (GameManager.Instance.IsCleared) return;
 
         currentIndex = (currentIndex + 1) % angles.Count;
-        transform.rotation = Quaternion.Euler(0, 0, angles[currentIndex]);
+        transform.rotation = Quaternion.Euler(currentX , currentY, angles[currentIndex]);
     }
 }

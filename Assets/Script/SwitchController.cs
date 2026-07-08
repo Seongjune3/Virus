@@ -9,6 +9,9 @@ public class SwitchController : MonoBehaviour, IPointerDownHandler
     public bool isRed = true;
     public float offAlpha = 0.3f;
 
+    public Color redStateColor = Color.red;
+    public Color blueStateColor = Color.blue;
+
     SpriteRenderer switchRenderer;
 
     void Start()
@@ -37,16 +40,16 @@ public class SwitchController : MonoBehaviour, IPointerDownHandler
             SetState(obj, !isRed);
         }
 
-        switchRenderer.color = isRed ? Color.red : Color.blue;
+        switchRenderer.color = isRed ? redStateColor : blueStateColor;
     }
 
     void SetState(GameObject obj, bool active)
     {
-        obj.GetComponent<Collider2D>().enabled = active;
-
-        SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
-        Color c = sr.color;
-        c.a = active ? 1f : offAlpha;
-        sr.color = c;
+        Collider2D[] allColliders = obj.GetComponentsInChildren<Collider2D>();
+        
+        foreach (Collider2D col in allColliders)
+        {
+            col.enabled = active;
+        }
     }
 }
