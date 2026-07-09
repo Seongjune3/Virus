@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2074000177279829613
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6745451957831853459}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6745451957831853459
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074000177279829613}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1405775852108243126}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5596012613903382023
 GameObject:
   m_ObjectHideFlags: 0
@@ -401,6 +432,7 @@ Transform:
   - {fileID: 7632111019460995011}
   - {fileID: 5827026662418895031}
   - {fileID: 1235803428275827869}
+  - {fileID: 6745451957831853459}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &373242349147143485
@@ -685,11 +717,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7319783724095688642, guid: 3021f577628b5c642874ee383fa6cde8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.38
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7319783724095688642, guid: 3021f577628b5c642874ee383fa6cde8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.15
+      value: 5.87
       objectReference: {fileID: 0}
     - target: {fileID: 7319783724095688642, guid: 3021f577628b5c642874ee383fa6cde8, type: 3}
       propertyPath: m_LocalPosition.z
@@ -861,7 +893,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6030639782473355750, guid: 3a49e33f9ad76bb4a8a2f62f5671200d, type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 0.627451
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -928,7 +960,7 @@ PrefabInstance:
     - target: {fileID: 6628670955034495808, guid: 8deb11d8cdd630b49bf0056a189c5ed3, type: 3}
       propertyPath: 'blueObjects.Array.data[0]'
       value: 
-      objectReference: {fileID: 8381424718669239604}
+      objectReference: {fileID: 2074000177279829613}
     - target: {fileID: 6628670955034495808, guid: 8deb11d8cdd630b49bf0056a189c5ed3, type: 3}
       propertyPath: 'blueObjects.Array.data[1]'
       value: 
@@ -1517,7 +1549,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6628670955034495808, guid: 8deb11d8cdd630b49bf0056a189c5ed3, type: 3}
       propertyPath: blueObjects.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6628670955034495808, guid: 8deb11d8cdd630b49bf0056a189c5ed3, type: 3}
       propertyPath: 'redObjects.Array.data[0]'
