@@ -110,6 +110,7 @@ public class GameManager : MonoBehaviour
     {
         if (currentMapInstance != null)
         {
+            currentMapInstance.SetActive(false);
             Destroy(currentMapInstance);
         }
 
